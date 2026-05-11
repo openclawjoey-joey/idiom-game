@@ -32,7 +32,7 @@ var attemptsLeft = MAX_ATTEMPTS;
 function buildFreeInputs(len) {
   var h = '';
   for (var i = 0; i < len; i++)
-    h += '<input type="text" class="char-input" maxlength="1" data-idx="' + i + '" ' +
+    h += '<input type="text" class="char-input" data-idx="' + i + '" ' +
          'inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="off">';
   $id('inputRow').innerHTML = h;
   bindInputs('.char-input', 'inputRow');
@@ -42,7 +42,7 @@ function buildHintInputs(c2) {
   var chars = c2.split('');
   var h = '', bi = 0;
   chars.forEach(function(ch) {
-    if (ch === '＿') { h += '<input type="text" class="hint-input" maxlength="1" data-blk="' + bi++ + '" ' +
+    if (ch === '＿') { h += '<input type="text" class="hint-input" data-blk="' + bi++ + '" ' +
       'inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="?">'; }
     else { h += '<div class="hint-ch-fixed">' + ch + '</div>'; }
   });
@@ -53,10 +53,25 @@ function buildHintInputs(c2) {
 function bindInputs(sel, containerId) {
   var ct = $id(containerId);
   var inputs = ct.querySelectorAll(sel);
+  var composing = false;
   inputs.forEach(function(inp, i) {
-    inp.addEventListener('input', function() {
+    inp.addEventListener('compositionstart', function() { composing = true; });
+    inp.addEventListener('compositionend', function() {
+      composing = false;
+      // After IME commit, clean up and auto-advance
       var v = inp.value.replace(/[^\u4e00-\u9fff]/g, '');
-      if (v !== inp.value) inp.value = v;
+      if (v.length > 1) { inp.value = v.slice(-1); }
+      if (inp.value) {
+        inp.classList.add('filled');
+        var all = ct.querySelectorAll(sel);
+        if (i + 1 < all.length) { all[i + 1].focus(); all[i + 1].select(); }
+      }
+    });
+    inp.addEventListener('input', function() {
+      if (composing) return; // Don't interfere with IME composition
+      var v = inp.value.replace(/[^\u4e00-\u9fff]/g, '');
+      inp.value = v;
+      if (v.length > 1) { inp.value = v.slice(-1); }
       if (v.length > 0) { inp.classList.add('filled'); var all = ct.querySelectorAll(sel); if (i+1 < all.length) all[i+1].focus(); }
       else { inp.classList.remove('filled'); }
     });
