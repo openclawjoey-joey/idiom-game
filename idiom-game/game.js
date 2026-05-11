@@ -127,8 +127,7 @@ function submitGuess() {
   if (isCorrect) {
     answered = true; disableCurrentInputs();
     markCorrect(q, guess);
-    var pts = 10; if (helpClicks===0) pts+=5; if (attemptsLeft===MAX_ATTEMPTS) pts+=3;
-    score+=pts; correctCount++; streak++;
+    var pts = helpClicks===0 ? 10 : 7; score+=pts; correctCount++; streak++;
     $id('bigEmoji').classList.add('bounce'); spawnConfetti();
     updateStats(); showResult(true, q);
   } else {
@@ -169,8 +168,7 @@ function handleOptionClick(e) {
   if (isCorrect) {
     answered = true; btn.classList.add('correct');
     $id('options').querySelectorAll('.opt-btn').forEach(function(b){b.disabled=true});
-    var pts = 8; if (attemptsLeft===MAX_ATTEMPTS) pts+=3;
-    score+=pts; correctCount++; streak++;
+    var pts = 3; score+=pts; correctCount++; streak++;
     $id('bigEmoji').classList.add('bounce'); spawnConfetti();
     updateStats(); showResult(true, q);
   } else {
