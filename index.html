@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>成語小偵探 🔍 - 看圖猜成語</title>
+<meta name="description" content="看 emoji 圖猜成語！成語小偵探是一個專為國小三年級到六年級設計的互動成語學習遊戲，透過圖片線索與三階段提示，讓小朋友邊玩邊學。">
+<meta name="keywords" content="成語,成語遊戲,emoji成語,看圖猜成語,小學成語,國語學習">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://idiom-game.netlify.app/">
+
+<!-- Open Graph -->
+<meta property="og:title" content="成語小偵探 🔍 - 看圖猜成語">
+<meta property="og:description" content="看 emoji 圖猜成語！專為國小三～六年級設計的互動成語學習遊戲。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://idiom-game.netlify.app/">
+<meta property="og:image" content="https://idiom-game.netlify.app/og-image.png">
+<meta property="og:locale" content="zh_TW">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="成語小偵探 🔍 - 看圖猜成語">
+<meta name="twitter:description" content="看 emoji 圖猜成語！專為國小三～六年級設計的互動成語學習遊戲。">
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "成語小偵探",
+  "description": "看 emoji 圖猜成語！專為國小三年級到六年級設計的互動成語學習遊戲，透過圖片線索與三階段提示學習成語。",
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "Any",
+  "url": "https://idiom-game.netlify.app/",
+  "inLanguage": "zh-Hant-TW",
+  "educationalUse": "國小國語成語學習輔助",
+  "typicalAgeRange": "8-12"
+}
+</script>
+
+<!-- JSON-LD FAQ Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [{
+    "@type": "Question",
+    "name": "成語小偵探是什麼？",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "成語小偵探是一個以 emoji 圖片猜成語的互動學習遊戲，專為國小三至六年級學童設計，收錄 100 個常用成語，搭配生活化例句與分層提示，讓孩子在遊戲中自然學會成語。"
+    }
+  },{
+    "@type": "Question",
+    "name": "如何玩成語小偵探？",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "看 emoji 圖片線索猜成語，答錯可以獲得提示（填空格、關鍵字、選項選擇），每題有三次嘗試機會。每輪隨機挑選 10 題，答完後可再玩一輪。"
+    }
+  }]
+}
+</script>
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="top">
+  <h1>🔍 成語小偵探</h1>
+  <p class="sub">看圖片猜成語 · 初級篇</p>
+</div>
+
+<div class="bar">
+  <div class="it"><div class="lb">🌟 得分</div><div class="vl" id="scoreEl">0</div></div>
+  <div class="it"><div class="lb">📝 進度</div><div class="vl g" id="progEl">1/10</div></div>
+  <div class="it"><div class="lb">🔥 連對</div><div class="vl" style="color:var(--c4)" id="streakEl">0</div></div>
+</div>
+
+<div class="dots" id="dots"></div>
+
+<div class="card" id="gameCard">
+  <div class="img-zone" id="imgZone">
+    <div class="big-emoji" id="bigEmoji">🪨🐦🐦</div>
+  </div>
+  <div class="q-bubble" id="qBubble">
+    <span class="emoji-q">🤔</span> 你覺得這張圖在說什麼成語呢？
+  </div>
+  <div class="steps">
+    <!-- Step 1: 自由輸入 -->
+    <div class="step active" id="step1">
+      <div class="input-row" id="inputRow"></div>
+      <p class="step-hint">在格子裡輸入你猜的成語吧！</p>
+      <div class="step1-btns">
+        <button class="btn-submit" id="submitGuess">✅ 確定</button>
+        <button class="btn-helper" id="helperBtn">🔍 小幫手</button>
+      </div>
+    </div>
+    <!-- Step 2: 第一層提示 填空 -->
+    <div class="step" id="step2">
+      <p class="step-label">💡 提示填空：</p>
+      <div class="hint-blank" id="hintBlank"></div>
+      <div style="margin-top:10px">
+        <button class="btn-helper" id="helperBtn2">🔍 還是不會？再幫我！</button>
+      </div>
+    </div>
+    <!-- Step 3: 選項 -->
+    <div class="step" id="step3">
+      <p class="step-label">🤔 哪一個才是正確成語？</p>
+      <div class="options" id="options"></div>
+    </div>
+    <!-- Step 4: 結果 -->
+    <div class="step" id="step4">
+      <div id="resultContent"></div>
+    </div>
+  </div>
+</div>
+
+<div class="stats-row">
+  <div class="st"><div class="n" style="color:var(--ok)" id="okC">0</div><div class="l">✅ 答對</div></div>
+  <div class="st"><div class="n" style="color:var(--ng)" id="ngC">0</div><div class="l">❌ 答錯</div></div>
+  <div class="st"><div class="n" style="color:var(--t2)" id="skC">0</div><div class="l">💡 求助</div></div>
+</div>
+
+<div class="confetti" id="confetti"></div>
+
+<script src="data.js"></script>
+<script src="game.js"></script>
+
+<!-- Cookie 同意橫幅 -->
+<div class="cookie-banner" id="cookieBanner" style="display:none;">
+  <div class="cookie-inner">
+    <span>🍪 本網站使用 Cookie 來提供廣告與分析流量。繼續使用表示您同意我們的 <a href="privacy.html">隱私權政策</a>。</span>
+    <button class="cookie-btn" id="cookieAccept">我同意</button>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer style="text-align:center;padding:20px;color:#aaa;font-size:0.8rem;">
+  <a href="privacy.html" style="color:#aaa;">隱私權政策</a> &nbsp;|&nbsp;
+  <a href="dict.html" style="color:#aaa;">成語字典</a>
+  <p style="margin-top:4px;">成語小偵探 — 讓學成語變好玩！</p>
+</footer>
+
+<script>
+(function(){
+  var banner = document.getElementById('cookieBanner');
+  if (!localStorage.getItem('cookie-consent')) {
+    banner.style.display = 'block';
+  }
+  document.getElementById('cookieAccept').addEventListener('click', function(){
+    localStorage.setItem('cookie-consent', '1');
+    banner.style.display = 'none';
+  });
+})();
+</script>
+</body>
+</html>
